@@ -1,0 +1,28 @@
+flutter_native_splash:
+  # 背景颜色
+  color: "#ffffff"
+  # 或者使用背景图片
+  #background_image: "assets/background.png"
+  
+  # 图片
+  image: assets/images/logo.png
+  
+  # 图片在暗黑模式下的背景颜色
+  color_dark: "#121212"
+  # 暗黑模式下的图片
+  #image_dark: assets/images/logo_dark.png
+
+  # Android 12 特性
+  android_12:
+    # 图片
+    image: assets/images/logo.png
+    # 图标背景颜色
+    icon_background_color: "#ffffff"
+    # 暗黑模式下的图标背景颜色
+    icon_background_color_dark: "#121212"
+
+  # 网页端配置
+  web: false
+  
+  # 全屏模式
+  fullscreen: false
