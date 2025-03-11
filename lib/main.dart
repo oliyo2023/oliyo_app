@@ -12,15 +12,13 @@ Future<void> main() async {
   // 配置日志
   Logger.root.level = Level.ALL; // 默认记录所有级别的日志
   Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print('${record.level.name}: ${record.time}: ${record.message}');
+    // 使用标准输出而不是print
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
     if (record.error != null) {
-      // ignore: avoid_print
-      print('Error: ${record.error}');
+      debugPrint('Error: ${record.error}');
     }
     if (record.stackTrace != null) {
-      // ignore: avoid_print
-      print('Stack trace: ${record.stackTrace}');
+      debugPrint('Stack trace: ${record.stackTrace}');
     }
   });
   

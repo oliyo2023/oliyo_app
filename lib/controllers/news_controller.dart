@@ -12,7 +12,7 @@ class NewsController extends GetxController {
   final isLoading = false.obs;
   final hasMorePosts = true.obs;
   final isError = false.obs;
-  
+
   int page = 1;
   final int perPage = 10;
   int retryCount = 0;
@@ -27,56 +27,59 @@ class NewsController extends GetxController {
   // 加载文章列表
   Future<void> loadPosts({bool refresh = false}) async {
     if (isLoading.value) return;
-    
+
     if (refresh) {
       page = 1;
       hasMorePosts.value = true;
       isError.value = false;
       retryCount = 0;
     }
-    
+
     if (!hasMorePosts.value) return;
-    
+
     isLoading.value = true;
     isError.value = false;
-    
+
     try {
       _logger.info('开始加载第 $page 页文章，每页 $perPage 篇');
-      
-      final resultList = await pbService.pbClient.collection('posts').getList(
-        page: page,
-        perPage: perPage,
-        sort: '-created', // 按创建时间降序排序
-      );
-      
-      final newPosts = resultList.items.map((item) => Post.fromJson(item.toJson())).toList();
-      
+
+      final resultList = await pbService.pbClient
+          .collection('posts')
+          .getList(
+            page: page,
+            perPage: perPage,
+            fields: "id,title,created", // 只获取必要的字段，不包含content
+            sort: '-created', // 按创建时间降序排序
+          );
+
+      final newPosts =
+          resultList.items.map((item) => Post.fromJson(item.toJson())).toList();
+
       if (refresh) {
         posts.clear();
       }
-      
+
       posts.addAll(newPosts);
-      
+
       // 检查是否还有更多文章
       hasMorePosts.value = newPosts.length >= perPage;
-      
+
       // 增加页码，为下次加载做准备
       if (hasMorePosts.value) {
         page++;
       }
-      
+
       retryCount = 0;
       _logger.info('加载了 ${newPosts.length} 篇文章，总共 ${posts.length} 篇');
     } catch (e) {
       final errorMsg = '加载文章失败: $e';
       _logger.warning(errorMsg);
-      
+
       isError.value = true;
-      
-      if (e.toString().contains('Connection closed') || 
-          e.toString().contains('timeout') || 
+
+      if (e.toString().contains('Connection closed') ||
+          e.toString().contains('timeout') ||
           e.toString().contains('SocketException')) {
-        
         retryCount++;
         if (retryCount <= maxRetries) {
           _logger.info('网络错误，尝试第 $retryCount 次重试...');
@@ -86,7 +89,7 @@ class NewsController extends GetxController {
           return;
         }
       }
-      
+
       Get.snackbar(
         '加载失败',
         '无法加载文章列表，请检查网络连接后重试',
@@ -104,9 +107,9 @@ class NewsController extends GetxController {
   Future<void> refreshPosts() async {
     return loadPosts(refresh: true);
   }
-  
+
+  // 重试加载
   void retryLoading() {
-    retryCount = 0;
     loadPosts(refresh: false);
   }
-} 
+}

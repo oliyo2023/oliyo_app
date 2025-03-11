@@ -1,14 +1,14 @@
 class Post {
   final String id;
   final String title;
-  final String content;
+  final String? content;
   final String? imageUrl;
   final DateTime created;
 
   Post({
     required this.id,
     required this.title,
-    required this.content,
+    this.content,
     this.imageUrl,
     required this.created,
   });
@@ -22,4 +22,4 @@ class Post {
       created: DateTime.parse(json['created']),
     );
   }
-} 
+}

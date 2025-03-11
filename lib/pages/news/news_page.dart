@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:oliyo_app/controllers/news_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:oliyo_app/pages/news/post_detail_page.dart'; // 导入文章详情页面
 
 class NewsPage extends GetView<NewsController> {
   const NewsPage({super.key});
@@ -88,9 +89,10 @@ class NewsPage extends GetView<NewsController> {
             color: const Color(0xFF9C27B0),
             child: NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
-                // 当滚动到底部且还有更多文章时，加载更多
-                if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent &&
+                // 当滚动接近底部且还有更多文章时，加载更多
+                // 使用阈值判断是否接近底部，而不是严格相等，以解决Web环境下的问题
+                if (scrollInfo.metrics.pixels >
+                        scrollInfo.metrics.maxScrollExtent - 50 &&
                     controller.hasMorePosts.value &&
                     !controller.isLoading.value &&
                     !controller.isError.value) {
@@ -171,22 +173,11 @@ class NewsPage extends GetView<NewsController> {
                       color: Colors.grey,
                     ),
                     onTap: () {
-                      // 点击文章显示详情对话框
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: Text(post.title),
-                              content: SingleChildScrollView(
-                                child: Text(post.content),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('关闭'),
-                                ),
-                              ],
-                            ),
+                      // 点击文章导航到详情页面，只传递文章ID
+                      Get.to(
+                        () => PostDetailPage(postId: post.id),
+                        transition: Transition.rightToLeft,
+                        duration: const Duration(milliseconds: 250),
                       );
                     },
                   );
