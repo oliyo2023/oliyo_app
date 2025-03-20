@@ -4,6 +4,7 @@ import 'package:oliyo_app/controllers/main_controller.dart';
 import 'package:oliyo_app/pages/home/home_page.dart';
 import 'package:oliyo_app/pages/news/news_page.dart';
 import 'package:oliyo_app/pages/discover/discover_page.dart';
+import 'package:oliyo_app/pages/message/message_page.dart';
 import 'package:oliyo_app/pages/profile/profile_page.dart';
 import 'package:oliyo_app/controllers/auth_controller.dart';
 import 'package:oliyo_app/routes/app_routes.dart';
@@ -22,13 +23,14 @@ class MainPage extends GetView<MainController> {
           HomePage(),
           NewsPage(),
           DiscoverPage(),
+          MessagePage(),
           ProfilePage(),
         ],
       )),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
         currentIndex: controller.currentIndex.value,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 3 || index == 4) {
             if (authController.pbService.pbClient.authStore.isValid) {
               controller.changePage(index);
             } else {
@@ -51,6 +53,10 @@ class MainPage extends GetView<MainController> {
           BottomNavigationBarItem(
             icon: Icon(Icons.explore),
             label: '发现',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: '消息',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
