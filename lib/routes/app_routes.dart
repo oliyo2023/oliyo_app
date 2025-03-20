@@ -6,6 +6,7 @@ abstract class Routes {
   static const profile = '/profile';
   static const login = '/login';
   static const register = '/register';
+  static const message = '/message';
 
   // 戒烟助手相关路由
   static const quitSmokingHome = '/quit_smoking_home';

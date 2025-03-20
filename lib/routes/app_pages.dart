@@ -9,6 +9,7 @@ import 'package:oliyo_app/pages/smoking_plan/smoking_plan_page.dart';
 import 'package:oliyo_app/pages/savings_calculator/savings_calculator_page.dart';
 import 'package:oliyo_app/pages/health_data/health_data_page.dart';
 import 'package:oliyo_app/pages/community/community_page.dart';
+import 'package:oliyo_app/pages/message/message_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -29,6 +30,11 @@ class AppPages {
       name: Routes.register,
       page: () => const RegisterPage(),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: Routes.message,
+      page: () => const MessagePage(),
+      binding: MainBinding(),
     ),
     // 戒烟助手相关路由
     GetPage(
