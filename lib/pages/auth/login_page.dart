@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:oliyo_app/controllers/login_controller.dart';
-import 'package:oliyo_app/routes/app_routes.dart'; // Import app_routes.dart
+import 'package:oliyo_app/routes/app_pages.dart';
+import 'package:oliyo_app/routes/app_routes.dart';
+// Import app_routes.dart
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
@@ -32,10 +34,7 @@ class LoginPage extends GetView<LoginController> {
                 top: 16,
                 left: 16,
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () {
                     Get.back();
                   },
@@ -78,13 +77,19 @@ class LoginPage extends GetView<LoginController> {
                               controller: controller.emailController,
                               decoration: InputDecoration(
                                 labelText: '邮箱',
-                                prefixIcon: const Icon(Icons.email, color: Color(0xFF9C27B0)),
+                                prefixIcon: const Icon(
+                                  Icons.email,
+                                  color: Color(0xFF9C27B0),
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xFF9C27B0), width: 2),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF9C27B0),
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                               keyboardType: TextInputType.emailAddress,
@@ -95,13 +100,19 @@ class LoginPage extends GetView<LoginController> {
                               controller: controller.passwordController,
                               decoration: InputDecoration(
                                 labelText: '密码',
-                                prefixIcon: const Icon(Icons.lock, color: Color(0xFF9C27B0)),
+                                prefixIcon: const Icon(
+                                  Icons.lock,
+                                  color: Color(0xFF9C27B0),
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xFF9C27B0), width: 2),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF9C27B0),
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                               obscureText: true,

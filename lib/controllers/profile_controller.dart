@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 import 'package:oliyo_app/controllers/auth_controller.dart'; // 导入 AuthController
-import 'package:oliyo_app/routes/app_routes.dart'; // 导入路由
+// 导入路由
 import 'package:logging/logging.dart';
 import 'package:flutter/material.dart';
+import 'package:oliyo_app/routes/app_routes.dart';
 
 final Logger _logger = Logger('ProfileController');
 
 class ProfileController extends GetxController {
-  final AuthController authController = Get.find<AuthController>(); // 获取 AuthController 实例
+  final AuthController authController =
+      Get.find<AuthController>(); // 获取 AuthController 实例
 
   void logout() async {
     try {
@@ -27,4 +29,4 @@ class ProfileController extends GetxController {
       );
     }
   }
-} 
+}

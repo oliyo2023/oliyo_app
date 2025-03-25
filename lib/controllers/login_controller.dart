@@ -2,13 +2,15 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:oliyo_app/controllers/auth_controller.dart'; // 导入 AuthController
 import 'package:logging/logging.dart'; // 导入 logging
-import 'package:oliyo_app/routes/app_routes.dart'; // Import app_routes.dart
-import 'package:oliyo_app/controllers/main_controller.dart'; // 导入 MainController
+// Import app_routes.dart
+import 'package:oliyo_app/controllers/main_controller.dart';
+import 'package:oliyo_app/main.dart' as Routes; // 导入 MainController
 
 final Logger _logger = Logger('LoginController'); // 创建 logger 实例
 
 class LoginController extends GetxController {
-  final AuthController authController = Get.find<AuthController>(); // 获取 AuthController 实例
+  final AuthController authController =
+      Get.find<AuthController>(); // 获取 AuthController 实例
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -48,7 +50,8 @@ class LoginController extends GetxController {
       );
       return;
     }
-    if (!RegExp(r'[a-zA-Z]').hasMatch(password) || !RegExp(r'[0-9]').hasMatch(password)) {
+    if (!RegExp(r'[a-zA-Z]').hasMatch(password) ||
+        !RegExp(r'[0-9]').hasMatch(password)) {
       _logger.warning('登录失败: 密码必须包含字母和数字');
       Get.snackbar(
         '登录失败',
@@ -61,10 +64,14 @@ class LoginController extends GetxController {
     }
 
     try {
-      await authController.pbService.pbClient.collection('users').authWithPassword(email, password);
-      _logger.info('登录成功: ${authController.pbService.pbClient.authStore.token}');
+      await authController.pbService.pbClient
+          .collection('users')
+          .authWithPassword(email, password);
+      _logger.info(
+        '登录成功: ${authController.pbService.pbClient.authStore.token}',
+      );
       // 登录成功后跳转到主页面并选择个人中心标签页
-      Get.offNamed(Routes.main); // 跳转到主页面，并替换当前路由
+      Get.offNamed(Routes.main as String); // 跳转到主页面，并替换当前路由
       // 获取 MainController 实例并切换到个人中心标签页（索引为3）
       final MainController mainController = Get.find<MainController>();
       mainController.changePage(3);
@@ -79,4 +86,4 @@ class LoginController extends GetxController {
       );
     }
   }
-} 
+}

@@ -173,7 +173,7 @@ class NewsPage extends GetView<NewsController> {
                       color: Colors.grey,
                     ),
                     onTap: () {
-                      // 点击文章导航到详情页面，只传递文章ID
+                      // 点击文章导航到详情页面
                       Get.to(
                         () => PostDetailPage(postId: post.id),
                         transition: Transition.rightToLeft,
