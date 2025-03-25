@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/rendering.dart';
 import '../../utils/chinese_calendar.dart';
 
 class ClockPage extends StatefulWidget {
-  const ClockPage({Key? key}) : super(key: key);
+  const ClockPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ClockPageState createState() => _ClockPageState();
 }
 

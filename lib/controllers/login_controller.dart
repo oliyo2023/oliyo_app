@@ -4,6 +4,7 @@ import 'package:oliyo_app/controllers/auth_controller.dart'; // 导入 AuthContr
 import 'package:logging/logging.dart'; // 导入 logging
 // Import app_routes.dart
 import 'package:oliyo_app/controllers/main_controller.dart';
+// ignore: library_prefixes
 import 'package:oliyo_app/main.dart' as Routes; // 导入 MainController
 
 final Logger _logger = Logger('LoginController'); // 创建 logger 实例
