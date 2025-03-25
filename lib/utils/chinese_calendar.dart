@@ -36,7 +36,6 @@ class ChineseCalendar {
   static String getGanzhiMonth(DateTime date) {
     int year = date.year;
     int month = date.month;
-    int day = date.day;
 
     // 简化计算，实际需要完整农历算法
     int offset = (year * 12 + month + 3) % 60;
