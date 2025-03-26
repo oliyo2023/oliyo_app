@@ -10,7 +10,7 @@ final _logger = Logger('main');
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 配置日志
-  Logger.root.level = Level.ALL; // 默认记录所有级别的日志
+  Logger.root.level = Level.INFO; // 默认记录所有级别的日志
   Logger.root.onRecord.listen((record) {
     // 使用标准输出而不是print
     debugPrint('${record.level.name}: ${record.time}: ${record.message}');
@@ -21,7 +21,7 @@ Future<void> main() async {
       debugPrint('Stack trace: ${record.stackTrace}');
     }
   });
-  
+
   await initServices(); // 等待服务初始化完成
   runApp(const MyApp());
 }
