@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             Text(
-              '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日',
+              '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日 ${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 10),
