@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oliyo_app/routes/app_pages.dart';
+import 'package:oliyo_app/routes/app_routes.dart'; // 导入路由定义
 import 'package:oliyo_app/services/pocketbase_service.dart'; // 导入 PocketBaseService
 import 'package:logging/logging.dart';
+import 'package:oliyo_app/services/time_service.dart'; // 导入 TimeService
 
 final _logger = Logger('main');
 
@@ -36,6 +38,13 @@ Future<void> initServices() async {
   await Get.putAsync(() async => await PocketBaseService().init());
   _logger.info('PocketBaseService service started...');
   _logger.info('All services started...');
+  // 初始化 TimeService
+  await Get.putAsync(() async {
+    final timeService = TimeService();
+    await timeService.init();
+    return timeService;
+  });
+  _logger.info('TimeService service started...');
 }
 
 class MyApp extends StatelessWidget {
@@ -50,7 +59,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.initial,
+      initialRoute: Routes.clock, // 将初始路由改为时钟页面
       getPages: AppPages.routes,
     );
   }

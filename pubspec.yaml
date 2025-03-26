@@ -35,6 +35,7 @@ dependencies:
   pocketbase: ^0.18.0
   logging: ^1.2.0
   intl: ^0.18.1
+  http: ^1.2.1 # 添加 http 包
   flutter_widget_from_html_core: ^0.10.5
 
   # The following adds the Cupertino Icons font to your application.
