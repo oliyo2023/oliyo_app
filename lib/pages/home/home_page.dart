@@ -185,10 +185,16 @@ class ClockPainter extends CustomPainter {
               colors: [
                 isCurrent
                     ? Colors.orangeAccent.shade100
-                    : Colors.purple.shade400.withOpacity(0.8),
+                    : Colors.purple.shade400.withAlpha(
+                      // Removed unnecessary !
+                      204,
+                    ), // Replaced withOpacity with withAlpha
                 isCurrent
                     ? Colors.orangeAccent.shade200
-                    : Colors.purple.shade900.withOpacity(0.8),
+                    : Colors.purple.shade900.withAlpha(
+                      // Removed unnecessary !
+                      204,
+                    ), // Replaced withOpacity with withAlpha
               ],
               startAngle: startAngle,
               endAngle: startAngle + sweepAngle,
