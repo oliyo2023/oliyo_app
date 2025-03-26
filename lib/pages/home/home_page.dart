@@ -145,6 +145,18 @@ class ClockPainter extends CustomPainter {
       canvas.drawLine(startPoint, endPoint, tickPaint);
 
       // Draw 24-hour numbers
+      if (i % 2 != 0) {
+        // Draw black line above odd numbers
+        final lineStart = Offset(
+          center.dx + (radius - 20) * cos(angle),
+          center.dy + (radius - 20) * sin(angle) - 8, // Adjust position
+        );
+        final lineEnd = Offset(
+          center.dx + (radius - 10) * cos(angle),
+          center.dy + (radius - 10) * sin(angle) - 8, // Adjust position
+        );
+        canvas.drawLine(lineStart, lineEnd, borderPaint..strokeWidth = 2);
+      }
       final hourNumber = (i == 0 ? 24 : i); // Display 24 instead of 0
       final textAngle = angle;
       final textPainter = TextPainter(
@@ -161,10 +173,12 @@ class ClockPainter extends CustomPainter {
       textPainter.layout();
       final textOffset = Offset(
         center.dx +
-            (radius - 25 - (isMainHour ? 5 : 0)) * cos(textAngle) -
+            (radius - 30 - (isMainHour ? 5 : 0)) *
+                cos(textAngle) - // Adjust position
             textPainter.width / 2, // Adjust position outward
         center.dy +
-            (radius - 25 - (isMainHour ? 5 : 0)) * sin(textAngle) -
+            (radius - 30 - (isMainHour ? 5 : 0)) *
+                sin(textAngle) - // Adjust position
             textPainter.height / 2,
       );
       textPainter.paint(canvas, textOffset);

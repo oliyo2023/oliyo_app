@@ -5,7 +5,7 @@ import 'package:logging/logging.dart'; // 导入 logging
 // Import app_routes.dart
 import 'package:oliyo_app/controllers/main_controller.dart';
 // ignore: library_prefixes
-import 'package:oliyo_app/main.dart' as Routes; // 导入 MainController
+import 'package:oliyo_app/routes/app_routes.dart'; // 导入正确的路由定义
 
 final Logger _logger = Logger('LoginController'); // 创建 logger 实例
 
@@ -23,6 +23,8 @@ class LoginController extends GetxController {
   }
 
   void login() async {
+    // Ensure MainController is initialized before navigating
+    Get.put(MainController());
     String email = emailController.text.trim(); // 获取邮箱并去除空格
     String password = passwordController.text.trim(); // 获取密码并去除空格
 
@@ -72,7 +74,7 @@ class LoginController extends GetxController {
         '登录成功: ${authController.pbService.pbClient.authStore.token}',
       );
       // 登录成功后跳转到主页面并选择个人中心标签页
-      Get.offNamed(Routes.main as String); // 跳转到主页面，并替换当前路由
+      Get.offNamed(Routes.main); // 跳转到主页面，并替换当前路由
       // 获取 MainController 实例并切换到个人中心标签页（索引为3）
       final MainController mainController = Get.find<MainController>();
       mainController.changePage(3);
