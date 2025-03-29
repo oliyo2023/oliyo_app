@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import '../../utils/chinese_calendar.dart';
+import 'package:get/get.dart'; // 导入 Get
+import '../../services/time_service.dart'; // 导入 TimeService
 
 class ClockPage extends StatefulWidget {
   const ClockPage({super.key});
@@ -14,13 +16,14 @@ class ClockPage extends StatefulWidget {
 class _ClockPageState extends State<ClockPage> {
   late Timer _timer;
   DateTime _currentTime = DateTime.now();
+  final TimeService timeService = Get.find<TimeService>(); // 获取 TimeService 实例
 
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        _currentTime = DateTime.now();
+        _currentTime = timeService.getCorrectedTime(); // 使用校准后的时间
       });
     });
   }
@@ -48,6 +51,14 @@ class _ClockPageState extends State<ClockPage> {
             Text(
               '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日',
               style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 5), // Add some space
+            Text(
+              '${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              ), // Style for the time
             ),
             const SizedBox(height: 10),
             Text(

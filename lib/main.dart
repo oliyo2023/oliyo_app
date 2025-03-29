@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oliyo_app/routes/app_pages.dart';
+// 导入路由定义
 import 'package:oliyo_app/services/pocketbase_service.dart'; // 导入 PocketBaseService
 import 'package:logging/logging.dart';
+import 'package:oliyo_app/services/time_service.dart'; // 导入 TimeService
 
 final _logger = Logger('main');
 
@@ -36,6 +38,11 @@ Future<void> initServices() async {
   await Get.putAsync(() async => await PocketBaseService().init());
   _logger.info('PocketBaseService service started...');
   _logger.info('All services started...');
+  // 初始化 TimeService
+  // 使用 Get.put 同步注册 TimeService 实例，并调用其（现在是同步的）init 方法
+  // init 方法会立即返回并在后台启动 NTP 获取
+  Get.put(TimeService()..init());
+  _logger.info('TimeService service started...');
 }
 
 class MyApp extends StatelessWidget {
@@ -50,7 +57,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.initial,
+      initialRoute: AppPages.initial, // 使用 AppPages 中定义的初始路由
       getPages: AppPages.routes,
     );
   }
