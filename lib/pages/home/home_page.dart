@@ -115,9 +115,10 @@ class ClockPainter extends CustomPainter {
     final innerRadius = radius * innerRadiusFactor;
 
     // Draw purple gradient background
+    // 绘制蓝色渐变背景
     final gradient = RadialGradient(
-      colors: [Colors.purple[300]!, Colors.purple[800]!],
-    );
+      colors: [Colors.blue.shade200, Colors.blue.shade800],
+    ); // 使用蓝色渐变
     final backgroundPaint =
         Paint()
           ..shader = gradient.createShader(
@@ -128,9 +129,12 @@ class ClockPainter extends CustomPainter {
     // Draw clock face border
     final borderPaint =
         Paint()
-          ..color = Colors.black
+          ..color =
+              Colors
+                  .grey
+                  .shade400 // 边框颜色改浅
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
+          ..strokeWidth = 2; // 边框稍微变细
     canvas.drawCircle(center, radius, borderPaint);
 
     // Draw inner circle border
@@ -139,40 +143,35 @@ class ClockPainter extends CustomPainter {
     // Draw 24-hour marks and numbers
     for (var i = 0; i < 24; i++) {
       final angle = pi / 12 * i - pi / 2; // Adjust angle to start from top
-      final isMainHour = i % 2 == 0; // Main hours for Earthly Branches
-      final tickLength = isMainHour ? 10 : 5; // Longer ticks for main hours
-      final tickWidth = isMainHour ? 2.0 : 1.0;
+      final isMain = i % 2 == 0; // 主刻度 (地支对应位置) - Renamed for consistency
+      final length = isMain ? 8 : 4; // 调整刻度长度 - Renamed for consistency
+      final strokeWidth =
+          isMain ? 1.5 : 1.0; // 调整刻度粗细 - Renamed for consistency
 
       final tickPaint =
           Paint()
             ..color =
                 Colors
-                    .white // White ticks for better visibility
-            ..strokeWidth = tickWidth;
+                    .grey
+                    .shade300 // 刻度颜色改浅
+            ..strokeWidth = strokeWidth; // Use consistent variable name
 
       final startPoint = Offset(
         center.dx + (radius - 5) * cos(angle), // Start from outer edge
         center.dy + (radius - 5) * sin(angle),
       );
       final endPoint = Offset(
-        center.dx + (radius - 5 - tickLength) * cos(angle),
-        center.dy + (radius - 5 - tickLength) * sin(angle),
+        center.dx + (radius - 5 - length) * cos(angle),
+        center.dy +
+            (radius - 5 - length) * sin(angle), // Corrected: Use 'length'
       );
-      canvas.drawLine(startPoint, endPoint, tickPaint);
+      if (!isMain) {
+        canvas.drawLine(startPoint, endPoint, tickPaint);
+      }
 
       // Draw 24-hour numbers
-      if (i % 2 != 0) {
-        // Draw black line above odd numbers
-        final lineStart = Offset(
-          center.dx + (radius - 20) * cos(angle),
-          center.dy + (radius - 20) * sin(angle) - 8, // Adjust position
-        );
-        final lineEnd = Offset(
-          center.dx + (radius - 10) * cos(angle),
-          center.dy + (radius - 10) * sin(angle) - 8, // Adjust position
-        );
-        canvas.drawLine(lineStart, lineEnd, borderPaint..strokeWidth = 2);
-      }
+      // Removed the black line drawing above odd numbers
+
       final hourNumber = (i == 0 ? 24 : i); // Display 24 instead of 0
       final textAngle = angle;
       final textPainter = TextPainter(
@@ -180,7 +179,7 @@ class ClockPainter extends CustomPainter {
           text: hourNumber.toString(),
           style: const TextStyle(
             color: Colors.yellowAccent,
-            fontSize: 16, // Slightly smaller font size
+            fontSize: 16, // 保持字体大小
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -189,11 +188,11 @@ class ClockPainter extends CustomPainter {
       textPainter.layout();
       final textOffset = Offset(
         center.dx +
-            (radius - 30 - (isMainHour ? 5 : 0)) *
+            (radius - 23) * // Use consistent positioning logic
                 cos(textAngle) - // Adjust position
             textPainter.width / 2, // Adjust position outward
         center.dy +
-            (radius - 30 - (isMainHour ? 5 : 0)) *
+            (radius - 23) * // Use consistent positioning logic
                 sin(textAngle) - // Adjust position
             textPainter.height / 2,
       );
@@ -203,28 +202,26 @@ class ClockPainter extends CustomPainter {
     // Draw Earthly Branch segments and text
     for (var i = 0; i < 12; i++) {
       // Calculate angles for each 2-hour segment
-      final startAngle = -pi / 2 + pi / 6 * i - pi / 12; // Center branch text
+      final startAngle = -pi / 2 + pi / 6 * i; // Use original angle calculation
       final sweepAngle = pi / 6;
       final isCurrent = i == adjustedBranchIndex;
 
-      // Draw segment background gradient
+      // 绘制扇形背景 - 使用蓝色系，当前时辰用青色高亮
       final segmentPaint =
           Paint()
             ..shader = SweepGradient(
               center: Alignment.center,
               colors: [
                 isCurrent
-                    ? Colors.orangeAccent.shade100
-                    : Colors.purple.shade400.withAlpha(
-                      // Removed unnecessary !
-                      204,
-                    ), // Replaced withOpacity with withAlpha
+                    ? Colors
+                        .cyan
+                        .shade300 // 当前时辰亮青色
+                    : Colors.blue.shade700, // 非当前时辰深蓝色
                 isCurrent
-                    ? Colors.orangeAccent.shade200
-                    : Colors.purple.shade900.withAlpha(
-                      // Removed unnecessary !
-                      204,
-                    ), // Replaced withOpacity with withAlpha
+                    ? Colors
+                        .cyan
+                        .shade500 // 当前时辰深青色
+                    : Colors.blue.shade900, // 非当前时辰更深的蓝色
               ],
               startAngle: startAngle,
               endAngle: startAngle + sweepAngle,
@@ -241,41 +238,52 @@ class ClockPainter extends CustomPainter {
       );
 
       // Draw Earthly Branch text
-      final textPainter = TextPainter(
+      final branchTextPainter = TextPainter(
+        // Rename to avoid conflict
         text: TextSpan(
           text: earthlyBranches[i],
           style: TextStyle(
             color:
-                isCurrent
-                    ? Colors.black
-                    : Colors.white, // Highlight current branch text
-            fontSize: 20, // Larger font size for branches
+                isCurrent ? Colors.black : Colors.white, // Keep highlight logic
+            fontSize: 22, // Use consistent font size
             fontWeight: FontWeight.bold,
           ),
         ),
         textDirection: TextDirection.ltr,
       );
-      textPainter.layout();
-      final segmentCenterAngle = startAngle + sweepAngle / 2;
+      branchTextPainter.layout();
+      // branchTextPainter.layout(); // Corrected: Use branchTextPainter - This line was duplicated, removing the incorrect one
+      final segmentCenterAngle =
+          startAngle + pi / 12; // Use consistent angle calculation
       final textOffset = Offset(
         center.dx +
-            (innerRadius * 0.65) * cos(segmentCenterAngle) -
-            textPainter.width / 2, // Position text within segment
+            (innerRadius * 0.7) *
+                cos(segmentCenterAngle) - // Use consistent positioning
+            branchTextPainter.width / 2, // Corrected: Use branchTextPainter
         center.dy +
-            (innerRadius * 0.65) * sin(segmentCenterAngle) -
-            textPainter.height / 2,
+            (innerRadius * 0.7) *
+                sin(segmentCenterAngle) - // Use consistent positioning
+            branchTextPainter.height / 2, // Corrected: Use branchTextPainter
       );
-      textPainter.paint(canvas, textOffset);
+      branchTextPainter.paint(
+        canvas,
+        textOffset,
+      ); // Corrected: Use branchTextPainter
 
       // Draw dividing lines between segments on the inner circle
       final dividerStart = Offset(
         center.dx + innerRadius * cos(startAngle + sweepAngle),
-        center.dy + innerRadius * sin(startAngle + sweepAngle),
+        center.dy +
+            innerRadius *
+                sin(startAngle + sweepAngle), // Use endAngle for consistency
       );
       final dividerEnd = Offset(
         center.dx +
-            radius * cos(startAngle + sweepAngle), // Extend to outer radius
-        center.dy + radius * sin(startAngle + sweepAngle),
+            radius *
+                cos(startAngle + sweepAngle), // Use endAngle for consistency
+        center.dy +
+            radius *
+                sin(startAngle + sweepAngle), // Use endAngle for consistency
       );
       canvas.drawLine(
         dividerStart,
@@ -285,16 +293,18 @@ class ClockPainter extends CustomPainter {
     }
 
     // Draw clock hands
-    final secondRadiusFactor = 0.6; // Adjusted lengths
-    final minuteRadiusFactor = 0.5;
-    final hourRadiusFactor = 0.35;
+    // 绘制指针, 调整长度和样式
+    final secondRadiusFactor = 0.85; // 秒针长一些
+    final minuteRadiusFactor = 0.7; // 分针次之
+    final hourRadiusFactor = 0.5; // 时针最短
 
     final secondHandPaint =
         Paint()
           ..color =
               Colors
                   .redAccent // Brighter red
-          ..strokeWidth = 1.5
+          ..strokeWidth =
+              1.0 // Thinner second hand
           ..strokeCap = StrokeCap.round;
 
     final minuteHandPaint =
@@ -302,7 +312,12 @@ class ClockPainter extends CustomPainter {
           ..color =
               Colors
                   .white // White for better contrast
-          ..strokeWidth = 3.0
+          ..color =
+              Colors
+                  .grey
+                  .shade300 // 分针颜色改浅灰
+          ..strokeWidth =
+              3.0 // Keep thickness
           ..strokeCap = StrokeCap.round;
 
     final hourHandPaint =
@@ -310,7 +325,11 @@ class ClockPainter extends CustomPainter {
           ..color =
               Colors
                   .amber // Amber for hour hand
-          ..strokeWidth = 4.0
+          ..color =
+              Colors
+                  .white // 时针改白色
+          ..strokeWidth =
+              4.0 // Keep thickness
           ..strokeCap = StrokeCap.round;
 
     // Second hand
@@ -324,7 +343,7 @@ class ClockPainter extends CustomPainter {
     // Minute hand
     final minuteAngle =
         (pi / 30 * time.minute + pi / 1800 * time.second) -
-        pi / 2; // Include seconds for smooth movement
+        pi / 2; // Keep smooth movement
     final minuteEnd = Offset(
       center.dx + radius * minuteRadiusFactor * cos(minuteAngle),
       center.dy + radius * minuteRadiusFactor * sin(minuteAngle),
@@ -334,7 +353,7 @@ class ClockPainter extends CustomPainter {
     // Hour hand (24-hour format)
     final hourAngle =
         (pi / 12 * (time.hour % 24) + pi / 720 * time.minute) -
-        pi / 2; // Adjusted for 24h and minutes
+        pi / 2; // Keep 24h adjustment
     final hourEnd = Offset(
       center.dx + radius * hourRadiusFactor * cos(hourAngle),
       center.dy + radius * hourRadiusFactor * sin(hourAngle),
@@ -342,10 +361,9 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, hourEnd, hourHandPaint);
 
     // Draw center dot
-    final centerDotPaint = Paint()..color = Colors.black;
-    canvas.drawCircle(center, 5, centerDotPaint);
-    final centerDotHighlightPaint = Paint()..color = Colors.grey[300]!;
-    canvas.drawCircle(center, 3, centerDotHighlightPaint);
+    // 绘制中心圆点
+    final centerDotPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(center, 4, centerDotPaint); // Single white dot
   }
 
   @override
