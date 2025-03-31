@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import '../../utils/chinese_calendar.dart'; // Corrected import path
+import 'package:lunar/lunar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Timer _timer;
   DateTime _currentTime = DateTime.now();
+  Lunar _currentLunar = Lunar.fromDate(DateTime.now()); // 添加农历日期
 
   @override
   void initState() {
@@ -22,6 +24,7 @@ class _HomePageState extends State<HomePage> {
         // Check if the widget is still mounted
         setState(() {
           _currentTime = DateTime.now();
+          _currentLunar = Lunar.fromDate(_currentTime); // 更新农历日期
         });
       } else {
         timer.cancel(); // Cancel timer if widget is disposed
@@ -57,6 +60,19 @@ class _HomePageState extends State<HomePage> {
             Text(
               ChineseCalendar.getFullGanzhiDate(_currentTime),
               style: const TextStyle(fontSize: 20, color: Colors.blue),
+            ),
+            Text(
+              // 添加农历信息
+              '农历：${_currentLunar.toString()}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            Text(
+              '宜：${_currentLunar.getDayYi()}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            Text(
+              '忌：${_currentLunar.getDayJi()}',
+              style: const TextStyle(fontSize: 20),
             ),
           ],
         ),
