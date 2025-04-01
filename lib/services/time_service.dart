@@ -1,5 +1,6 @@
 import 'package:ntp/ntp.dart'; // 使用 ntp 包
 import 'package:logging/logging.dart';
+import 'package:flutter/foundation.dart'; // 导入 kIsWeb
 
 class TimeService {
   final _logger = Logger('TimeService');
@@ -22,21 +23,30 @@ class TimeService {
 
   // 新增私有异步方法用于后台获取NTP时间
   Future<void> _fetchNtpTimeInBackground() async {
-    try {
-      _logger.info('Fetching NTP time in background...');
-      // 获取NTP时间 (NTP.now() 返回的是本地时区的时间)
-      final ntpTime = await NTP.now();
-      final localTime = DateTime.now();
-      // 计算NTP时间与本地时间的偏移量
-      _offset = ntpTime.difference(localTime);
-      _logger.info('NTP time fetched successfully. Offset: $_offset');
-    } catch (e, stackTrace) {
-      _logger.severe('Error fetching NTP time', e, stackTrace);
-      // 如果发生异常，偏移量保持为零
-      _offset = Duration.zero;
-    } finally {
-      // 标记为已初始化（尝试过），防止 init() 再次触发后台获取
+    // 检查是否在Web平台运行
+    if (kIsWeb) {
+      _logger.info('Skipping NTP fetch on Web platform.');
+      // 在Web上，直接标记为已初始化，使用本地时间
       _isInitialized = true;
+      _offset = Duration.zero; // 确保偏移量为零
+    } else {
+      // 非Web平台，执行NTP获取
+      try {
+        _logger.info('Fetching NTP time in background...');
+        // 获取NTP时间 (NTP.now() 返回的是本地时区的时间)
+        final ntpTime = await NTP.now();
+        final localTime = DateTime.now();
+        // 计算NTP时间与本地时间的偏移量
+        _offset = ntpTime.difference(localTime);
+        _logger.info('NTP time fetched successfully. Offset: $_offset');
+      } catch (e, stackTrace) {
+        _logger.severe('Error fetching NTP time', e, stackTrace);
+        // 如果发生异常，偏移量保持为零
+        _offset = Duration.zero;
+      } finally {
+        // 标记为已初始化（尝试过），防止 init() 再次触发后台获取
+        _isInitialized = true;
+      }
     }
   }
 
