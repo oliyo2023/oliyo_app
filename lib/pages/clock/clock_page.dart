@@ -15,12 +15,13 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   late Timer _timer;
-  DateTime _currentTime = DateTime.now();
+  late DateTime _currentTime; // 改为 late，在 initState 中初始化
   final TimeService timeService = Get.find<TimeService>(); // 获取 TimeService 实例
 
   @override
   void initState() {
     super.initState();
+    _currentTime = timeService.getCorrectedTime(); // 在 initState 开始时获取初始时间
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentTime = timeService.getCorrectedTime(); // 使用校准后的时间
