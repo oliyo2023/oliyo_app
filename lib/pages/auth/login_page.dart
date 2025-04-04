@@ -10,9 +10,20 @@ class LoginPage extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     // 注册 LoginController
-    Get.put(LoginController());
+    // Get.put(LoginController());
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF9C27B0),
+        elevation: 0,
+        leading: IconButton(
+          iconSize: 30,
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () {
+            Get.back(); // 返回到上一个页面
+          },
+        ),
+      ),
       body: Container(
         // 使用紫色渐变背景
         decoration: const BoxDecoration(
@@ -29,16 +40,7 @@ class LoginPage extends GetView<LoginController> {
           child: Stack(
             children: [
               // 返回按钮
-              Positioned(
-                top: 16,
-                left: 16,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
-              ),
+
               // 登录表单
               Center(
                 child: SingleChildScrollView(
