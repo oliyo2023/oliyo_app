@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import '../../utils/chinese_calendar.dart'; // Corrected import path
+import 'package:lunar/lunar.dart';
+import '../../widgets/jumping_text.dart'; // 导入 JumpingText Widget
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Timer _timer;
   DateTime _currentTime = DateTime.now();
+  Lunar _currentLunar = Lunar.fromDate(DateTime.now()); // 添加农历日期
 
   @override
   void initState() {
@@ -22,6 +25,7 @@ class _HomePageState extends State<HomePage> {
         // Check if the widget is still mounted
         setState(() {
           _currentTime = DateTime.now();
+          _currentLunar = Lunar.fromDate(_currentTime); // 更新农历日期
         });
       } else {
         timer.cancel(); // Cancel timer if widget is disposed
@@ -38,28 +42,126 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100], // 添加现代化的浅灰色背景
       // Removed AppBar to make it cleaner for the home page, can be added back if needed
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 320,
-              height: 320,
-              child: CustomPaint(painter: ClockPainter(_currentTime)),
+      body: Stack(
+        // 使用 Stack 进行叠加
+        children: [
+          // 主要内容区域
+          Center(
+            child: SingleChildScrollView(
+              // Add SingleChildScrollView to prevent overflow if content is too long
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .center, // Ensure children are centered horizontally
+                children: [
+                  const SizedBox(height: 60), // 调整顶部间距以匹配紫色区域高度
+                  SizedBox(
+                    width: 320,
+                    height: 320,
+                    child: CustomPaint(painter: ClockPainter(_currentTime)),
+                  ),
+                  const SizedBox(height: 20), // 在时钟和跳动文字之间添加一些间距
+                  const JumpingText(
+                    text: 'OLIYO',
+                    // 可以调整样式、跳动高度、速度等
+                    // style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+                    // jumpHeight: 12.0,
+                    // duration: Duration(milliseconds: 1000),
+                    // staggerDelay: Duration(milliseconds: 150),
+                  ),
+                  const SizedBox(height: 30), // 增加时钟和下方信息的间距
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ), // 给文本区域添加水平内边距
+                    child: Column(
+                      children: [
+                        Text(
+                          '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日 ${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
+                          style:
+                              Theme.of(context).textTheme.titleLarge, // 使用主题样式
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8), // 调整间距
+                        Text(
+                          ChineseCalendar.getFullGanzhiDate(_currentTime),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(
+                            color: Colors.blueAccent,
+                          ), // 使用主题样式并保留颜色
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8), // 调整间距
+                        Text(
+                          '农历：${_currentLunar.toString()}',
+                          style:
+                              Theme.of(context).textTheme.titleMedium, // 使用主题样式
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16), // 增加宜忌前的间距
+                        Row(
+                          // 使用 Row 格式化“宜”
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '宜：',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Expanded(
+                              // 让内容自动换行
+                              child: Text(
+                                _currentLunar.getDayYi().join(' '), // 用空格连接列表项
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8), // 宜忌之间的间距
+                        Row(
+                          // 使用 Row 格式化“忌”
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '忌：',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Expanded(
+                              // 让内容自动换行
+                              child: Text(
+                                _currentLunar.getDayJi().join(' '), // 用空格连接列表项
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日 ${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
-              style: const TextStyle(fontSize: 24),
+          ),
+          // 顶部的半透明紫色区域
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 60, // 将高度调整为 60
+              color: Colors.purple.withAlpha(
+                77,
+              ), // 使用 withAlpha 替代 deprecated 的 withOpacity
             ),
-            const SizedBox(height: 10),
-            Text(
-              ChineseCalendar.getFullGanzhiDate(_currentTime),
-              style: const TextStyle(fontSize: 20, color: Colors.blue),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
       // Removed BottomNavigationBar
     );
@@ -99,9 +201,10 @@ class ClockPainter extends CustomPainter {
     final innerRadius = radius * innerRadiusFactor;
 
     // Draw purple gradient background
+    // 绘制蓝色渐变背景
     final gradient = RadialGradient(
-      colors: [Colors.purple[300]!, Colors.purple[800]!],
-    );
+      colors: [Colors.blue.shade200, Colors.blue.shade800],
+    ); // 使用蓝色渐变
     final backgroundPaint =
         Paint()
           ..shader = gradient.createShader(
@@ -112,9 +215,12 @@ class ClockPainter extends CustomPainter {
     // Draw clock face border
     final borderPaint =
         Paint()
-          ..color = Colors.black
+          ..color =
+              Colors
+                  .grey
+                  .shade400 // 边框颜色改浅
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
+          ..strokeWidth = 2; // 边框稍微变细
     canvas.drawCircle(center, radius, borderPaint);
 
     // Draw inner circle border
@@ -123,40 +229,35 @@ class ClockPainter extends CustomPainter {
     // Draw 24-hour marks and numbers
     for (var i = 0; i < 24; i++) {
       final angle = pi / 12 * i - pi / 2; // Adjust angle to start from top
-      final isMainHour = i % 2 == 0; // Main hours for Earthly Branches
-      final tickLength = isMainHour ? 10 : 5; // Longer ticks for main hours
-      final tickWidth = isMainHour ? 2.0 : 1.0;
+      final isMain = i % 2 == 0; // 主刻度 (地支对应位置) - Renamed for consistency
+      final length = isMain ? 8 : 4; // 调整刻度长度 - Renamed for consistency
+      final strokeWidth =
+          isMain ? 1.5 : 1.0; // 调整刻度粗细 - Renamed for consistency
 
       final tickPaint =
           Paint()
             ..color =
                 Colors
-                    .white // White ticks for better visibility
-            ..strokeWidth = tickWidth;
+                    .grey
+                    .shade300 // 刻度颜色改浅
+            ..strokeWidth = strokeWidth; // Use consistent variable name
 
       final startPoint = Offset(
         center.dx + (radius - 5) * cos(angle), // Start from outer edge
         center.dy + (radius - 5) * sin(angle),
       );
       final endPoint = Offset(
-        center.dx + (radius - 5 - tickLength) * cos(angle),
-        center.dy + (radius - 5 - tickLength) * sin(angle),
+        center.dx + (radius - 5 - length) * cos(angle),
+        center.dy +
+            (radius - 5 - length) * sin(angle), // Corrected: Use 'length'
       );
-      canvas.drawLine(startPoint, endPoint, tickPaint);
+      if (!isMain) {
+        canvas.drawLine(startPoint, endPoint, tickPaint);
+      }
 
       // Draw 24-hour numbers
-      if (i % 2 != 0) {
-        // Draw black line above odd numbers
-        final lineStart = Offset(
-          center.dx + (radius - 20) * cos(angle),
-          center.dy + (radius - 20) * sin(angle) - 8, // Adjust position
-        );
-        final lineEnd = Offset(
-          center.dx + (radius - 10) * cos(angle),
-          center.dy + (radius - 10) * sin(angle) - 8, // Adjust position
-        );
-        canvas.drawLine(lineStart, lineEnd, borderPaint..strokeWidth = 2);
-      }
+      // Removed the black line drawing above odd numbers
+
       final hourNumber = (i == 0 ? 24 : i); // Display 24 instead of 0
       final textAngle = angle;
       final textPainter = TextPainter(
@@ -164,7 +265,7 @@ class ClockPainter extends CustomPainter {
           text: hourNumber.toString(),
           style: const TextStyle(
             color: Colors.yellowAccent,
-            fontSize: 16, // Slightly smaller font size
+            fontSize: 16, // 保持字体大小
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -173,11 +274,11 @@ class ClockPainter extends CustomPainter {
       textPainter.layout();
       final textOffset = Offset(
         center.dx +
-            (radius - 30 - (isMainHour ? 5 : 0)) *
+            (radius - 23) * // Use consistent positioning logic
                 cos(textAngle) - // Adjust position
             textPainter.width / 2, // Adjust position outward
         center.dy +
-            (radius - 30 - (isMainHour ? 5 : 0)) *
+            (radius - 23) * // Use consistent positioning logic
                 sin(textAngle) - // Adjust position
             textPainter.height / 2,
       );
@@ -187,28 +288,26 @@ class ClockPainter extends CustomPainter {
     // Draw Earthly Branch segments and text
     for (var i = 0; i < 12; i++) {
       // Calculate angles for each 2-hour segment
-      final startAngle = -pi / 2 + pi / 6 * i - pi / 12; // Center branch text
+      final startAngle = -pi / 2 + pi / 6 * i; // Use original angle calculation
       final sweepAngle = pi / 6;
       final isCurrent = i == adjustedBranchIndex;
 
-      // Draw segment background gradient
+      // 绘制扇形背景 - 使用蓝色系，当前时辰用青色高亮
       final segmentPaint =
           Paint()
             ..shader = SweepGradient(
               center: Alignment.center,
               colors: [
                 isCurrent
-                    ? Colors.orangeAccent.shade100
-                    : Colors.purple.shade400.withAlpha(
-                      // Removed unnecessary !
-                      204,
-                    ), // Replaced withOpacity with withAlpha
+                    ? Colors
+                        .cyan
+                        .shade300 // 当前时辰亮青色
+                    : Colors.blue.shade700, // 非当前时辰深蓝色
                 isCurrent
-                    ? Colors.orangeAccent.shade200
-                    : Colors.purple.shade900.withAlpha(
-                      // Removed unnecessary !
-                      204,
-                    ), // Replaced withOpacity with withAlpha
+                    ? Colors
+                        .cyan
+                        .shade500 // 当前时辰深青色
+                    : Colors.blue.shade900, // 非当前时辰更深的蓝色
               ],
               startAngle: startAngle,
               endAngle: startAngle + sweepAngle,
@@ -225,41 +324,52 @@ class ClockPainter extends CustomPainter {
       );
 
       // Draw Earthly Branch text
-      final textPainter = TextPainter(
+      final branchTextPainter = TextPainter(
+        // Rename to avoid conflict
         text: TextSpan(
           text: earthlyBranches[i],
           style: TextStyle(
             color:
-                isCurrent
-                    ? Colors.black
-                    : Colors.white, // Highlight current branch text
-            fontSize: 20, // Larger font size for branches
+                isCurrent ? Colors.black : Colors.white, // Keep highlight logic
+            fontSize: 22, // Use consistent font size
             fontWeight: FontWeight.bold,
           ),
         ),
         textDirection: TextDirection.ltr,
       );
-      textPainter.layout();
-      final segmentCenterAngle = startAngle + sweepAngle / 2;
+      branchTextPainter.layout();
+      // branchTextPainter.layout(); // Corrected: Use branchTextPainter - This line was duplicated, removing the incorrect one
+      final segmentCenterAngle =
+          startAngle + pi / 12; // Use consistent angle calculation
       final textOffset = Offset(
         center.dx +
-            (innerRadius * 0.65) * cos(segmentCenterAngle) -
-            textPainter.width / 2, // Position text within segment
+            (innerRadius * 0.7) *
+                cos(segmentCenterAngle) - // Use consistent positioning
+            branchTextPainter.width / 2, // Corrected: Use branchTextPainter
         center.dy +
-            (innerRadius * 0.65) * sin(segmentCenterAngle) -
-            textPainter.height / 2,
+            (innerRadius * 0.7) *
+                sin(segmentCenterAngle) - // Use consistent positioning
+            branchTextPainter.height / 2, // Corrected: Use branchTextPainter
       );
-      textPainter.paint(canvas, textOffset);
+      branchTextPainter.paint(
+        canvas,
+        textOffset,
+      ); // Corrected: Use branchTextPainter
 
       // Draw dividing lines between segments on the inner circle
       final dividerStart = Offset(
         center.dx + innerRadius * cos(startAngle + sweepAngle),
-        center.dy + innerRadius * sin(startAngle + sweepAngle),
+        center.dy +
+            innerRadius *
+                sin(startAngle + sweepAngle), // Use endAngle for consistency
       );
       final dividerEnd = Offset(
         center.dx +
-            radius * cos(startAngle + sweepAngle), // Extend to outer radius
-        center.dy + radius * sin(startAngle + sweepAngle),
+            radius *
+                cos(startAngle + sweepAngle), // Use endAngle for consistency
+        center.dy +
+            radius *
+                sin(startAngle + sweepAngle), // Use endAngle for consistency
       );
       canvas.drawLine(
         dividerStart,
@@ -269,16 +379,18 @@ class ClockPainter extends CustomPainter {
     }
 
     // Draw clock hands
-    final secondRadiusFactor = 0.6; // Adjusted lengths
-    final minuteRadiusFactor = 0.5;
-    final hourRadiusFactor = 0.35;
+    // 绘制指针, 调整长度和样式
+    final secondRadiusFactor = 0.85; // 秒针长一些
+    final minuteRadiusFactor = 0.7; // 分针次之
+    final hourRadiusFactor = 0.5; // 时针最短
 
     final secondHandPaint =
         Paint()
           ..color =
               Colors
                   .redAccent // Brighter red
-          ..strokeWidth = 1.5
+          ..strokeWidth =
+              1.0 // Thinner second hand
           ..strokeCap = StrokeCap.round;
 
     final minuteHandPaint =
@@ -286,7 +398,12 @@ class ClockPainter extends CustomPainter {
           ..color =
               Colors
                   .white // White for better contrast
-          ..strokeWidth = 3.0
+          ..color =
+              Colors
+                  .grey
+                  .shade300 // 分针颜色改浅灰
+          ..strokeWidth =
+              3.0 // Keep thickness
           ..strokeCap = StrokeCap.round;
 
     final hourHandPaint =
@@ -294,7 +411,11 @@ class ClockPainter extends CustomPainter {
           ..color =
               Colors
                   .amber // Amber for hour hand
-          ..strokeWidth = 4.0
+          ..color =
+              Colors
+                  .white // 时针改白色
+          ..strokeWidth =
+              4.0 // Keep thickness
           ..strokeCap = StrokeCap.round;
 
     // Second hand
@@ -308,7 +429,7 @@ class ClockPainter extends CustomPainter {
     // Minute hand
     final minuteAngle =
         (pi / 30 * time.minute + pi / 1800 * time.second) -
-        pi / 2; // Include seconds for smooth movement
+        pi / 2; // Keep smooth movement
     final minuteEnd = Offset(
       center.dx + radius * minuteRadiusFactor * cos(minuteAngle),
       center.dy + radius * minuteRadiusFactor * sin(minuteAngle),
@@ -318,7 +439,7 @@ class ClockPainter extends CustomPainter {
     // Hour hand (24-hour format)
     final hourAngle =
         (pi / 12 * (time.hour % 24) + pi / 720 * time.minute) -
-        pi / 2; // Adjusted for 24h and minutes
+        pi / 2; // Keep 24h adjustment
     final hourEnd = Offset(
       center.dx + radius * hourRadiusFactor * cos(hourAngle),
       center.dy + radius * hourRadiusFactor * sin(hourAngle),
@@ -326,10 +447,9 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, hourEnd, hourHandPaint);
 
     // Draw center dot
-    final centerDotPaint = Paint()..color = Colors.black;
-    canvas.drawCircle(center, 5, centerDotPaint);
-    final centerDotHighlightPaint = Paint()..color = Colors.grey[300]!;
-    canvas.drawCircle(center, 3, centerDotHighlightPaint);
+    // 绘制中心圆点
+    final centerDotPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(center, 4, centerDotPaint); // Single white dot
   }
 
   @override

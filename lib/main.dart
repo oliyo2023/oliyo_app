@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oliyo_app/routes/app_pages.dart';
 // 导入路由定义
+import 'package:oliyo_app/controllers/app_controller.dart'; // 导入 AppController
 import 'package:oliyo_app/services/pocketbase_service.dart'; // 导入 PocketBaseService
 import 'package:logging/logging.dart';
 import 'package:oliyo_app/services/time_service.dart'; // 导入 TimeService
@@ -39,26 +40,31 @@ Future<void> initServices() async {
   _logger.info('PocketBaseService service started...');
   _logger.info('All services started...');
   // 初始化 TimeService
-  // 使用 Get.put 同步注册 TimeService 实例，并调用其（现在是同步的）init 方法
-  // init 方法会立即返回并在后台启动 NTP 获取
   Get.put(TimeService()..init());
   _logger.info('TimeService service started...');
+  // 初始化 AppController
+  Get.put(AppController());
+  _logger.info('AppController service started...');
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends GetView<AppController> {
+  // 修改继承
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
-        useMaterial3: true,
+    // 使用 Obx 包裹 GetMaterialApp 以监听标题变化
+    return Obx(
+      () => GetMaterialApp(
+        title: controller.appTitle.value, // 绑定到可观察的标题
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppPages.initial, // 使用 AppPages 中定义的初始路由
+        getPages: AppPages.routes,
       ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.initial, // 使用 AppPages 中定义的初始路由
-      getPages: AppPages.routes,
     );
   }
 }

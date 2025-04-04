@@ -15,12 +15,13 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   late Timer _timer;
-  DateTime _currentTime = DateTime.now();
+  late DateTime _currentTime; // 改为 late，在 initState 中初始化
   final TimeService timeService = Get.find<TimeService>(); // 获取 TimeService 实例
 
   @override
   void initState() {
     super.initState();
+    _currentTime = timeService.getCorrectedTime(); // 在 initState 开始时获取初始时间
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentTime = timeService.getCorrectedTime(); // 使用校准后的时间
@@ -102,9 +103,10 @@ class ClockPainter extends CustomPainter {
     final innerRadius = radius * innerRadiusFactor;
 
     // 绘制紫色渐变背景
+    // 绘制蓝色渐变背景
     final gradient = RadialGradient(
-      colors: [Colors.purple[300]!, Colors.purple[800]!],
-    );
+      colors: [Colors.blue.shade200, Colors.blue.shade800],
+    ); // 使用蓝色渐变
     final backgroundPaint =
         Paint()
           ..shader = gradient.createShader(
@@ -115,9 +117,12 @@ class ClockPainter extends CustomPainter {
     // 绘制表盘边框
     final borderPaint =
         Paint()
-          ..color = Colors.black
+          ..color =
+              Colors
+                  .grey
+                  .shade400 // 边框颜色改浅
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
+          ..strokeWidth = 2; // 边框稍微变细
     canvas.drawCircle(center, radius, borderPaint);
 
     // 绘制内圆
@@ -126,12 +131,15 @@ class ClockPainter extends CustomPainter {
     // 绘制24小时刻度
     for (var i = 0; i < 24; i++) {
       final angle = pi / 12 * i;
-      final isMain = i % 2 == 0;
-      final length = isMain ? 1 : 0.5;
-      final strokeWidth = isMain ? 0.8 : 0.5;
+      final isMain = i % 2 == 0; // 主刻度 (地支对应位置)
+      final length = isMain ? 8 : 4; // 调整刻度长度
+      final strokeWidth = isMain ? 1.5 : 1.0; // 调整刻度粗细
       final tickPaint =
           Paint()
-            ..color = Colors.black
+            ..color =
+                Colors
+                    .grey
+                    .shade300 // 刻度颜色改浅
             ..strokeWidth = strokeWidth;
 
       if (isMain) {
@@ -139,20 +147,17 @@ class ClockPainter extends CustomPainter {
       }
 
       final start = Offset(
-        center.dx + (radius - 20) * cos(angle - pi / 2),
-        center.dy + (radius - 20) * sin(angle - pi / 2),
+        center.dx + (radius - 5) * cos(angle - pi / 2), // 调整起始位置靠近边缘
+        center.dy + (radius - 5) * sin(angle - pi / 2),
       );
       final end = Offset(
-        center.dx + (radius - 20 - length - 8) * cos(angle - pi / 2),
-        center.dy + (radius - 20 - length - 8) * sin(angle - pi / 2),
+        center.dx + (radius - 5 - length) * cos(angle - pi / 2), // 调整结束位置
+        center.dy + (radius - 5 - length) * sin(angle - pi / 2),
       );
 
       canvas.drawLine(start, end, tickPaint);
 
-      // 绘制1-24数字 - 使用明亮颜色，更大字体
-
-      // if (!isMain) { // Only draw numbers for main hours - removed condition to draw numbers for all hours
-
+      // 绘制1-24数字
       final hour = i == 0 ? 24 : i;
       final textAngle = angle - pi / 2;
       final textPainter = TextPainter(
@@ -160,7 +165,7 @@ class ClockPainter extends CustomPainter {
           text: hour.toString(),
           style: const TextStyle(
             color: Colors.yellowAccent,
-            fontSize: 18,
+            fontSize: 16, // 字体稍微调小
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -169,7 +174,9 @@ class ClockPainter extends CustomPainter {
       textPainter.layout();
       final textOffset = Offset(
         center.dx + (radius - 23) * cos(textAngle) - textPainter.width / 2,
-        center.dy + (radius - 23) * sin(textAngle) - textPainter.height / 2,
+        center.dy +
+            (radius - 23) * sin(textAngle) -
+            textPainter.height / 2, // 调整数字位置更靠近边缘
       );
       textPainter.paint(canvas, textOffset);
       // }
@@ -181,22 +188,22 @@ class ClockPainter extends CustomPainter {
       final endAngle = -pi / 2 + pi / 6 * (i + 1);
       final isCurrent = i == adjustedBranchIndex;
 
-      // 绘制扇形背景 - 渐变色,  Current segment to lighter Grey, use Colors.grey, use lightBlueGrey - CORRECTED COLOR HERE to lightGrey - now light grey - now light grey again - now light green accent - now light cyan accent - now light grey - now light orange - now lime - now grey - now orange accent - final orange - final lighter orange - final lighter orange/yellow - final light grey - final light green - final light blue grey - final light orange red - final orange red - final remove red
+      // 绘制扇形背景 - 使用蓝色系，当前时辰用青色高亮
       final segmentPaint =
           Paint()
             ..shader = SweepGradient(
               center: Alignment.center,
               colors: [
                 isCurrent
-                    ? Colors.orangeAccent.shade100
-                    : Colors
-                        .purple
-                        .shade400, // lightOrangeAccent for current segment - CORRECTED COLOR HERE to lightGrey - now light grey - now light grey again - now light green accent - now light cyan accent - now light grey - now light orange - now light orange accent - final orange - final lighter orange - final lighter orange/yellow - final light grey - final light green - final light blue grey - final light orange red - final orange red - final remove red
+                    ? Colors
+                        .cyan
+                        .shade300 // 当前时辰亮青色
+                    : Colors.blue.shade700, // 非当前时辰深蓝色
                 isCurrent
-                    ? Colors.orangeAccent.shade200
-                    : Colors
-                        .purple
-                        .shade900, // Darker lightOrangeAccent -  CORRECTED COLOR HERE to lightGrey - now light grey - now light grey again - now light green accent - now light cyan accent - now light grey - now light orange - now light orange accent - final orange - final lighter orange - final lighter orange/yellow - final light grey - final light green - final light blue grey - final light orange red - final orange red - final remove red
+                    ? Colors
+                        .cyan
+                        .shade500 // 当前时辰深青色
+                    : Colors.blue.shade900, // 非当前时辰更深的蓝色
               ],
               startAngle: startAngle,
               endAngle: endAngle,
@@ -213,7 +220,8 @@ class ClockPainter extends CustomPainter {
       );
 
       // 绘制地支文字 - 更大字体，内圆中心
-      final textPainter = TextPainter(
+      final branchTextPainter = TextPainter(
+        // 重命名避免冲突
         text: TextSpan(
           text: earthlyBranches[i],
           style: const TextStyle(
@@ -224,17 +232,17 @@ class ClockPainter extends CustomPainter {
         ),
         textDirection: TextDirection.ltr,
       );
-      textPainter.layout();
+      branchTextPainter.layout();
       final segmentCenterAngle = startAngle + pi / 12;
       final textOffset = Offset(
         center.dx +
             (innerRadius * 0.7) * cos(segmentCenterAngle) -
-            textPainter.width / 2,
+            branchTextPainter.width / 2,
         center.dy +
             (innerRadius * 0.7) * sin(segmentCenterAngle) -
-            textPainter.height / 2,
+            branchTextPainter.height / 2,
       );
-      textPainter.paint(canvas, textOffset);
+      branchTextPainter.paint(canvas, textOffset);
 
       // 绘制分割刻度 - 内圆和外圆之间 - shorten length even more
       final tickMarkStart = Offset(
@@ -246,12 +254,10 @@ class ClockPainter extends CustomPainter {
         center.dy + radius * sin(endAngle),
       );
       canvas.drawLine(tickMarkStart, tickMarkEnd, borderPaint);
-    }
-
-    // 绘制指针, 极短指针长度, 颜色区分更明显
-    final secondRadiusFactor = 0.5;
-    final minuteRadiusFactor = 0.4;
-    final hourRadiusFactor = 0.25;
+    } // 绘制指针, 调整长度和样式
+    final secondRadiusFactor = 0.85; // 秒针长一些
+    final minuteRadiusFactor = 0.7; // 分针次之
+    final hourRadiusFactor = 0.5; // 时针最短
 
     final secondHandPaint =
         Paint()
@@ -261,14 +267,19 @@ class ClockPainter extends CustomPainter {
 
     final minuteHandPaint =
         Paint()
-          ..color = Colors.grey[500]!
-          ..strokeWidth = 1.8
+          ..color =
+              Colors
+                  .grey
+                  .shade300 // 分针颜色改浅灰
+          ..strokeWidth =
+              3.0 // 分针变粗
           ..strokeCap = StrokeCap.round;
 
     final hourHandPaint =
         Paint()
           ..color = Colors.white
-          ..strokeWidth = 2.5
+          ..strokeWidth =
+              4.0 // 时针加粗
           ..strokeCap = StrokeCap.round;
 
     // 秒针
@@ -280,7 +291,8 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, secondEnd, secondHandPaint);
 
     // 分针
-    final minuteAngle = pi / 30 * time.minute;
+    final minuteAngle =
+        pi / 30 * time.minute + pi / 1800 * time.second; // 分针更平滑
     final minuteEnd = Offset(
       center.dx + radius * minuteRadiusFactor * cos(minuteAngle - pi / 2),
       center.dy + radius * minuteRadiusFactor * sin(minuteAngle - pi / 2),
@@ -291,12 +303,17 @@ class ClockPainter extends CustomPainter {
     final hourAngle =
         pi / 12 * (time.hour % 24) +
         pi / 720 * time.minute; // Adjusted hour angle calculation
+    // pi / (720 * 60) * time.second; // 时针更平滑，可选
     final hourEnd = Offset(
       center.dx + radius * hourRadiusFactor * cos(hourAngle - pi / 2),
       center.dy + radius * hourRadiusFactor * sin(hourAngle - pi / 2),
     );
     canvas.drawLine(center, hourEnd, hourHandPaint);
-  }
+
+    // 绘制中心圆点
+    final centerDotPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(center, 4, centerDotPaint);
+  } // End of paint method
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
