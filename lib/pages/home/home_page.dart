@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import '../../utils/chinese_calendar.dart'; // Corrected import path
 import 'package:lunar/lunar.dart';
+import '../../widgets/jumping_text.dart'; // 导入 JumpingText Widget
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,93 +42,126 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100], // 添加现代化的浅灰色背景
       // Removed AppBar to make it cleaner for the home page, can be added back if needed
-      body: Center(
-        child: SingleChildScrollView(
-          // Add SingleChildScrollView to prevent overflow if content is too long
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment:
-                CrossAxisAlignment
-                    .center, // Ensure children are centered horizontally
-            children: [
-              SizedBox(
-                width: 320,
-                height: 320,
-                child: CustomPaint(painter: ClockPainter(_currentTime)),
-              ),
-              const SizedBox(height: 30), // 增加时钟和下方信息的间距
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                ), // 给文本区域添加水平内边距
-                child: Column(
-                  children: [
-                    Text(
-                      '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日 ${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
-                      style: Theme.of(context).textTheme.titleLarge, // 使用主题样式
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8), // 调整间距
-                    Text(
-                      ChineseCalendar.getFullGanzhiDate(_currentTime),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.blueAccent,
-                      ), // 使用主题样式并保留颜色
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8), // 调整间距
-                    Text(
-                      '农历：${_currentLunar.toString()}',
-                      style: Theme.of(context).textTheme.titleMedium, // 使用主题样式
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16), // 增加宜忌前的间距
-                    Row(
-                      // 使用 Row 格式化“宜”
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        // 使用 Stack 进行叠加
+        children: [
+          // 主要内容区域
+          Center(
+            child: SingleChildScrollView(
+              // Add SingleChildScrollView to prevent overflow if content is too long
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .center, // Ensure children are centered horizontally
+                children: [
+                  const SizedBox(height: 60), // 调整顶部间距以匹配紫色区域高度
+                  SizedBox(
+                    width: 320,
+                    height: 320,
+                    child: CustomPaint(painter: ClockPainter(_currentTime)),
+                  ),
+                  const SizedBox(height: 20), // 在时钟和跳动文字之间添加一些间距
+                  const JumpingText(
+                    text: 'OLIYO',
+                    // 可以调整样式、跳动高度、速度等
+                    // style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+                    // jumpHeight: 12.0,
+                    // duration: Duration(milliseconds: 1000),
+                    // staggerDelay: Duration(milliseconds: 150),
+                  ),
+                  const SizedBox(height: 30), // 增加时钟和下方信息的间距
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ), // 给文本区域添加水平内边距
+                    child: Column(
                       children: [
                         Text(
-                          '宜：',
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          '${_currentTime.year}年${_currentTime.month}月${_currentTime.day}日 ${_currentTime.hour.toString().padLeft(2, '0')}:${_currentTime.minute.toString().padLeft(2, '0')}:${_currentTime.second.toString().padLeft(2, '0')}',
+                          style:
+                              Theme.of(context).textTheme.titleLarge, // 使用主题样式
+                          textAlign: TextAlign.center,
                         ),
-                        Expanded(
-                          // 让内容自动换行
-                          child: Text(
-                            _currentLunar.getDayYi().join(' '), // 用空格连接列表项
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
+                        const SizedBox(height: 8), // 调整间距
+                        Text(
+                          ChineseCalendar.getFullGanzhiDate(_currentTime),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(
+                            color: Colors.blueAccent,
+                          ), // 使用主题样式并保留颜色
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8), // 调整间距
+                        Text(
+                          '农历：${_currentLunar.toString()}',
+                          style:
+                              Theme.of(context).textTheme.titleMedium, // 使用主题样式
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16), // 增加宜忌前的间距
+                        Row(
+                          // 使用 Row 格式化“宜”
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '宜：',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Expanded(
+                              // 让内容自动换行
+                              child: Text(
+                                _currentLunar.getDayYi().join(' '), // 用空格连接列表项
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8), // 宜忌之间的间距
+                        Row(
+                          // 使用 Row 格式化“忌”
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '忌：',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Expanded(
+                              // 让内容自动换行
+                              child: Text(
+                                _currentLunar.getDayJi().join(' '), // 用空格连接列表项
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8), // 宜忌之间的间距
-                    Row(
-                      // 使用 Row 格式化“忌”
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '忌：',
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          // 让内容自动换行
-                          child: Text(
-                            _currentLunar.getDayJi().join(' '), // 用空格连接列表项
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          // 顶部的半透明紫色区域
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 60, // 将高度调整为 60
+              color: Colors.purple.withAlpha(
+                77,
+              ), // 使用 withAlpha 替代 deprecated 的 withOpacity
+            ),
+          ),
+        ],
       ),
       // Removed BottomNavigationBar
     );
