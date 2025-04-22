@@ -24,10 +24,10 @@ class JumpingText extends StatefulWidget {
   });
 
   @override
-  _JumpingTextState createState() => _JumpingTextState();
+  JumpingTextState createState() => JumpingTextState();
 }
 
-class _JumpingTextState extends State<JumpingText>
+class JumpingTextState extends State<JumpingText>
     with TickerProviderStateMixin {
   late List<AnimationController> _controllers;
   late List<Animation<double>> _animations;

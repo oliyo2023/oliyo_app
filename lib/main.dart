@@ -58,7 +58,9 @@ class MyApp extends GetView<AppController> {
       () => GetMaterialApp(
         title: controller.appTitle.value, // 绑定到可观察的标题
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.teal,
+          ), // 更新种子颜色为青色
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
