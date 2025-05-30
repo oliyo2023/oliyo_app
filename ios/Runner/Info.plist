@@ -47,5 +47,27 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.tencent.qq</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<!-- Replace YOUR_QQ_APP_ID with your actual QQ App ID -->
+					<string>tencentYOUR_QQ_APP_ID</string>
+				</array>
+			</dict>
+		</array>
+		<!-- Add the following key for LSApplicationQueriesSchemes -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>mqq</string>
+			<string>mqqapi</string>
+			<string>mqqwpa</string>
+			<string>mqqbrowser</string>
+		</array>
 	</dict>
 </plist>

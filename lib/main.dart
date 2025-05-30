@@ -7,6 +7,13 @@ import 'package:oliyo_app/controllers/app_controller.dart'; // 导入 AppControl
 import 'package:oliyo_app/services/pocketbase_service.dart'; // 导入 PocketBaseService
 import 'package:logging/logging.dart';
 import 'package:oliyo_app/services/time_service.dart'; // 导入 TimeService
+import 'package:flutter_qq/flutter_qq.dart';
+
+void main() {
+  // Initialize the QQ SDK
+  FlutterQq.initQQ();
+  runApp(MyApp());
+}
 
 final _logger = Logger('main');
 
