@@ -5,6 +5,7 @@ import 'package:oliyo_app/pages/auth/login_page.dart';
 import 'package:oliyo_app/pages/auth/register_page.dart';
 import 'package:oliyo_app/bindings/auth_binding.dart';
 import 'package:oliyo_app/bindings/main_binding.dart';
+import 'package:oliyo_app/bindings/clock_binding.dart';
 import 'package:oliyo_app/pages/home/quit_smoking_home_page.dart';
 import 'package:oliyo_app/pages/smoking_plan/smoking_plan_page.dart';
 import 'package:oliyo_app/pages/savings_calculator/savings_calculator_page.dart';
@@ -44,7 +45,11 @@ class AppPages {
     ),
     GetPage(name: Routes.healthData, page: () => const HealthDataPage()),
     GetPage(name: Routes.community, page: () => const CommunityPage()),
-    GetPage(name: Routes.clock, page: () => const ClockPage()),
+    GetPage(
+      name: Routes.clock,
+      page: () => const ClockPage(),
+      binding: ClockBinding(),
+    ),
     GetPage(name: Routes.message, page: () => const MessagePage()),
   ];
 }
