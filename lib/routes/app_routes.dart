@@ -8,4 +8,5 @@ class Routes {
   static const healthData = '/health_data';
   static const community = '/community';
   static const clock = '/clock';
+  static const message = '/message';
 }

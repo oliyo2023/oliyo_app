@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:oliyo_app/pages/home/home_page.dart';
-// 导入路由定义
+import 'package:oliyo_app/routes/app_pages.dart';
 // 导入 AppController
 // 导入 PocketBaseService
 // 导入 TimeService
@@ -14,13 +15,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Oliyo App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const HomePage(),
+      getPages: AppPages.routes,
     );
   }
 }

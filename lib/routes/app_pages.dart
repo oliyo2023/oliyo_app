@@ -10,6 +10,7 @@ import 'package:oliyo_app/pages/smoking_plan/smoking_plan_page.dart';
 import 'package:oliyo_app/pages/savings_calculator/savings_calculator_page.dart';
 import 'package:oliyo_app/pages/health_data/health_data_page.dart';
 import 'package:oliyo_app/pages/community/community_page.dart';
+import 'package:oliyo_app/pages/message/message_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -44,5 +45,6 @@ class AppPages {
     GetPage(name: Routes.healthData, page: () => const HealthDataPage()),
     GetPage(name: Routes.community, page: () => const CommunityPage()),
     GetPage(name: Routes.clock, page: () => const ClockPage()),
+    GetPage(name: Routes.message, page: () => const MessagePage()),
   ];
 }
