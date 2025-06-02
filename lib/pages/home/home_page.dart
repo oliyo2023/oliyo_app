@@ -64,13 +64,40 @@ class _HomePageState extends State<HomePage> {
                     child: CustomPaint(painter: ClockPainter(_currentTime)),
                   ),
                   const SizedBox(height: 20), // 在时钟和跳动文字之间添加一些间距
-                  const JumpingText(
-                    text: 'OLIYO',
-                    // 可以调整样式、跳动高度、速度等
-                    // style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
-                    // jumpHeight: 12.0,
-                    // duration: Duration(milliseconds: 1000),
-                    // staggerDelay: Duration(milliseconds: 150),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: JumpingText(
+                        text: 'OLIYO',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.black.withOpacity(0.3),
+                              offset: Offset(2, 2),
+                            )
+                          ],
+                        ),
+                        jumpHeight: 16.0,
+                        duration: Duration(milliseconds: 1000),
+                        staggerDelay: Duration(milliseconds: 150),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30), // 增加时钟和下方信息的间距
                   Padding(
@@ -152,16 +179,23 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // 顶部的半透明紫色区域
+          // 顶部的渐变遮罩区域
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: 60, // 将高度调整为 60
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withAlpha(77), // 使用主题主色调并保持透明度
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary.withOpacity(0.95),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -410,8 +444,7 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, minuteEnd, minuteHandPaint);
 
     // Hour hand (24-hour format)
-    final hourAngle =
-        (pi / 12 * (time.hour % 24) + pi / 720 * time.minute) - pi / 2;
+    final hourAngle = (pi / 12 * (time.hour % 24) + pi / 720 * time.minute) - pi / 2;
     final hourEnd = Offset(
       center.dx + radius * hourRadiusFactor * cos(hourAngle),
       center.dy + radius * hourRadiusFactor * sin(hourAngle),
@@ -419,12 +452,10 @@ class ClockPainter extends CustomPainter {
     canvas.drawLine(center, hourEnd, hourHandPaint);
 
     // Draw center dot
-    // 绘制中心圆点
     final centerDotPaint = Paint()..color = Colors.amber.shade600; // 中心点改为金色
     canvas.drawCircle(center, 4, centerDotPaint);
   }
 
   @override
-  bool shouldRepaint(covariant ClockPainter oldDelegate) =>
-      oldDelegate.time != time; // Only repaint if time changes
+  bool shouldRepaint(covariant ClockPainter oldDelegate) => oldDelegate.time != time;
 }

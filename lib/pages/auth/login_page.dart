@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:oliyo_app/controllers/login_controller.dart';
 import 'package:oliyo_app/routes/app_routes.dart';
-import 'package:flutter_qq/flutter_qq.dart';
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
@@ -167,24 +166,3 @@ class LoginPage extends GetView<LoginController> {
     );
   }
 }
-
-// Inside your login page widget, add a method to handle QQ login
-Future<void> _qqLogin() async {
-  try {
-    final result = await FlutterQq.login();
-    // Handle the login result here
-    print('QQ Login Result: $result');
-    if (result != null && result['openid'] != null) {
-      // Successfully logged in with QQ
-      // You can now use the openid and access token for further operations
-    }
-  } catch (error) {
-    print('Error during QQ login: $error');
-  }
-}
-
-// Add a button to trigger QQ login
-ElevatedButton(
-  onPressed: _qqLogin,
-  child: Text('Login with QQ'),
-)
