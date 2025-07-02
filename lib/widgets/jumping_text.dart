@@ -27,101 +27,98 @@ class JumpingText extends StatefulWidget {
   JumpingTextState createState() => JumpingTextState();
 }
 
-class JumpingTextState extends State<JumpingText>
-    with TickerProviderStateMixin {
-  late List<AnimationController> _controllers;
-  late List<Animation<double>> _animations;
-  late List<Color> _colors; // List to store colors for each character
-  late Timer _colorTimer; // Timer to change colors
-  final Random _random = Random(); // Random number generator
+class JumpingTextState extends State<JumpingText> with TickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final List<Animation<double>> _animations;
+  late final List<ValueNotifier<Color>> _colorNotifiers;
+  late final Timer _colorTimer;
+  final Random _random = Random();
 
-  // Function to generate a random color
   Color _getRandomColor() {
     return Color.fromARGB(
-      255, // Fully opaque
-      _random.nextInt(256), // Random red
-      _random.nextInt(256), // Random green
-      _random.nextInt(256), // Random blue
+      255,
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    // Initialize colors with random values
-    _colors = List.generate(widget.text.length, (_) => _getRandomColor());
-    _controllers = List.generate(widget.text.length, (index) {
-      return AnimationController(vsync: this, duration: widget.duration);
-    });
+
+    // Total duration for one sequence of all characters animating
+    final totalDuration =
+        widget.duration + widget.staggerDelay * (widget.text.length - 1);
+
+    _controller = AnimationController(vsync: this, duration: totalDuration)
+      ..repeat();
 
     _animations = List.generate(widget.text.length, (index) {
-      // Create a curved animation for smoother jump
-      final curvedAnimation = CurvedAnimation(
-        parent: _controllers[index],
-        curve: Curves.easeInOut, // Use easeInOut for smooth start and end
-      );
+      final startTime = (widget.staggerDelay * index).inMilliseconds;
+      final endTime = startTime + widget.duration.inMilliseconds;
+      final start = startTime / totalDuration.inMilliseconds;
+      final end = endTime / totalDuration.inMilliseconds;
 
-      // Use TweenSequence for up and down motion
-      return TweenSequence<double>([
-        // Jump up (takes 50% of duration)
+      // Tween for the up and down motion
+      final tween = TweenSequence<double>([
         TweenSequenceItem(
-          tween: Tween(
-            begin: 0.0,
-            end: -widget.jumpHeight,
-          ).chain(CurveTween(curve: Curves.easeOut)),
+          tween: Tween(begin: 0.0, end: -widget.jumpHeight)
+              .chain(CurveTween(curve: Curves.easeOut)),
           weight: 50,
         ),
-        // Fall down (takes 50% of duration)
         TweenSequenceItem(
-          tween: Tween(
-            begin: -widget.jumpHeight,
-            end: 0.0,
-          ).chain(CurveTween(curve: Curves.easeIn)),
+          tween: Tween(begin: -widget.jumpHeight, end: 0.0)
+              .chain(CurveTween(curve: Curves.easeIn)),
           weight: 50,
         ),
-      ]).animate(curvedAnimation);
+      ]);
+
+      // Apply the interval to the main controller
+      return tween.animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Interval(start, end, curve: Curves.easeInOut),
+        ),
+      );
     });
 
-    // Start animations with a stagger delay
-    for (int i = 0; i < widget.text.length; i++) {
-      Future.delayed(widget.staggerDelay * i, () {
-        if (mounted) {
-          // Check if widget is still mounted before starting animation
-          _controllers[i].repeat(reverse: false); // Loop the animation
-        }
-      });
-    }
+    // Initialize color notifiers
+    _colorNotifiers = List.generate(
+      widget.text.length,
+      (_) => ValueNotifier<Color>(_getRandomColor()),
+    );
 
-    // Start timer to change colors periodically (e.g., every 500ms)
+    // Timer to update colors. This is more efficient than calling setState.
     _colorTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (mounted) {
-        setState(() {
-          _colors = List.generate(widget.text.length, (_) => _getRandomColor());
-        });
-      } else {
-        timer.cancel(); // Cancel timer if widget is disposed
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      for (final notifier in _colorNotifiers) {
+        notifier.value = _getRandomColor();
       }
     });
   }
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
+    _controller.dispose();
+    _colorTimer.cancel();
+    for (final notifier in _colorNotifiers) {
+      notifier.dispose();
     }
-    _colorTimer.cancel(); // Cancel the color timer
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Use the theme's titleLarge style as a base if no style is provided
     final defaultStyle =
         Theme.of(context).textTheme.titleLarge ?? const TextStyle(fontSize: 22);
     final effectiveStyle = widget.style ?? defaultStyle;
 
     return Row(
-      mainAxisSize: MainAxisSize.min, // Take minimum space needed by characters
+      mainAxisSize: MainAxisSize.min,
       children: List.generate(widget.text.length, (index) {
         return AnimatedBuilder(
           animation: _animations[index],
@@ -131,10 +128,14 @@ class JumpingTextState extends State<JumpingText>
               child: child,
             );
           },
-          child: Text(
-            widget.text[index],
-            // Apply the current color and merge with the provided/default style
-            style: effectiveStyle.copyWith(color: _colors[index]),
+          child: ValueListenableBuilder<Color>(
+            valueListenable: _colorNotifiers[index],
+            builder: (context, color, _) {
+              return Text(
+                widget.text[index],
+                style: effectiveStyle.copyWith(color: color),
+              );
+            },
           ),
         );
       }),
