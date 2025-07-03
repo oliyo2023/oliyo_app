@@ -26,10 +26,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Add the following meta-data tag -->
-            <meta-data
-                android:name="com.tencent.mm.sdk.plugin.Intent.ACTION_QQ_AUTH"
-                android:value="YOUR_QQ_APP_ID" />
+
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
-import 'package:oliyo_app/controllers/main_controller.dart';
-import 'package:oliyo_app/controllers/home_controller.dart';
-import 'package:oliyo_app/controllers/news_controller.dart';
 import 'package:oliyo_app/controllers/discover_controller.dart';
+import 'package:oliyo_app/controllers/home_controller.dart';
+import 'package:oliyo_app/controllers/main_controller.dart';
+import 'package:oliyo_app/controllers/news_controller.dart';
 import 'package:oliyo_app/controllers/profile_controller.dart';
-import 'package:oliyo_app/controllers/auth_controller.dart';
-import 'package:oliyo_app/services/pocketbase_service.dart';
 import 'package:oliyo_app/services/time_service.dart';
 
 class MainBinding extends Bindings {
@@ -19,14 +17,6 @@ class MainBinding extends Bindings {
       fenix: true,
     ); // 注册 DiscoverController
     Get.lazyPut(() => ProfileController(), fenix: true); // 注册 ProfileController
-    Get.lazyPut(
-      () => AuthController(),
-      fenix: true,
-    ); // Register AuthController in MainBinding
-    Get.lazyPut<PocketBaseService>(
-      () => PocketBaseService(),
-      fenix: true,
-    ); // Register PocketBaseService in MainBinding
     Get.lazyPut<TimeService>(() {
       final timeService = TimeService();
       timeService.init(); // 初始化 TimeService
