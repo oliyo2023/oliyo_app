@@ -17,6 +17,10 @@ class MainBinding extends Bindings {
       fenix: true,
     ); // 注册 DiscoverController
     Get.lazyPut(() => ProfileController(), fenix: true); // 注册 ProfileController
+
+    // 注意：AuthController 和 PocketBaseService 在 InitialBinding 中初始化
+    // 这里只是确保在需要时可以安全访问
+
     Get.lazyPut<TimeService>(() {
       final timeService = TimeService();
       timeService.init(); // 初始化 TimeService

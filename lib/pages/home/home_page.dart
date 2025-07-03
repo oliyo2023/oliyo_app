@@ -191,6 +191,12 @@ class _HomePageState extends State<HomePage> {
                     () => Get.to(() => const QuitSmokingHomePage()),
                   ),
                   _buildQuickActionCard(
+                    '儿童识物',
+                    Icons.child_care,
+                    const Color(0xFF4CAF50),
+                    () => Get.toNamed(Routes.learning),
+                  ),
+                  _buildQuickActionCard(
                     '时钟',
                     Icons.access_time,
                     Colors.blue,

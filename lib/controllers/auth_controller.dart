@@ -3,8 +3,8 @@ import 'package:oliyo_app/services/pocketbase_service.dart'; // 导入 PocketBas
 import 'package:pocketbase/pocketbase.dart'; // 导入 PocketBase 相关类
 
 class AuthController extends GetxController {
-  final PocketBaseService pbService =
-      Get.find<PocketBaseService>(); // 使用 PocketBaseService
+  // 延迟获取 PocketBaseService，避免初始化顺序问题
+  PocketBaseService get pbService => Get.find<PocketBaseService>();
 
   // 使用 Rx<RecordModel?> 来存储当前用户模型，使其可观察
   final Rx<RecordModel?> currentUser = Rx<RecordModel?>(null);

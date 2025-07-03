@@ -12,6 +12,7 @@ import 'package:oliyo_app/pages/savings_calculator/savings_calculator_page.dart'
 import 'package:oliyo_app/pages/health_data/health_data_page.dart';
 import 'package:oliyo_app/pages/community/community_page.dart';
 import 'package:oliyo_app/pages/message/message_page.dart';
+import 'package:oliyo_app/pages/learning/learning_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -51,5 +52,6 @@ class AppPages {
       binding: ClockBinding(),
     ),
     GetPage(name: Routes.message, page: () => const MessagePage()),
+    GetPage(name: Routes.learning, page: () => const LearningPage()),
   ];
 }

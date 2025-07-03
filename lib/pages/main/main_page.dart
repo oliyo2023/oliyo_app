@@ -13,7 +13,9 @@ class MainPage extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.find<AuthController>();
+    // 安全地获取 AuthController，如果不存在则返回 null
+    final AuthController? authController =
+        Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null;
 
     return Scaffold(
       body: Obx(
@@ -32,7 +34,10 @@ class MainPage extends GetView<MainController> {
           currentIndex: controller.currentIndex.value,
           onTap: (index) {
             if (index == 3) {
-              if (authController.pbService.pbClient.authStore.isValid) {
+              // 检查用户是否已登录，如果 authController 不可用则默认未登录
+              final isLoggedIn =
+                  authController?.pbService.pbClient.authStore.isValid ?? false;
+              if (isLoggedIn) {
                 controller.changePage(index);
               } else {
                 Get.toNamed(Routes.login);

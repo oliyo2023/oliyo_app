@@ -7,7 +7,8 @@ import 'package:logging/logging.dart';
 final Logger _logger = Logger('NewsController');
 
 class NewsController extends GetxController {
-  final PocketBaseService pbService = Get.find<PocketBaseService>();
+  // 延迟获取 PocketBaseService，避免初始化顺序问题
+  PocketBaseService get pbService => Get.find<PocketBaseService>();
   final posts = <Post>[].obs;
   final isLoading = false.obs;
   final hasMorePosts = true.obs;
