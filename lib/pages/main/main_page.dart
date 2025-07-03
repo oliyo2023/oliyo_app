@@ -16,48 +16,40 @@ class MainPage extends GetView<MainController> {
     final AuthController authController = Get.find<AuthController>();
 
     return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: controller.currentIndex.value,
-        children: const [
-          HomePage(),
-          NewsPage(),
-          DiscoverPage(),
-          ProfilePage(),
-        ],
-      )),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-        currentIndex: controller.currentIndex.value,
-        onTap: (index) {
-          if (index == 3) {
-            if (authController.pbService.pbClient.authStore.isValid) {
-              controller.changePage(index);
+      body: Obx(
+        () => IndexedStack(
+          index: controller.currentIndex.value,
+          children: const [
+            HomePage(),
+            NewsPage(),
+            DiscoverPage(),
+            ProfilePage(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+          currentIndex: controller.currentIndex.value,
+          onTap: (index) {
+            if (index == 3) {
+              if (authController.pbService.pbClient.authStore.isValid) {
+                controller.changePage(index);
+              } else {
+                Get.toNamed(Routes.login);
+              }
             } else {
-              Get.toNamed(Routes.login);
+              controller.changePage(index);
             }
-          } else {
-            controller.changePage(index);
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.newspaper),
-            label: '新闻',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: '发现',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '我的',
-          ),
-        ],
-      )),
+          },
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
+            BottomNavigationBarItem(icon: Icon(Icons.newspaper), label: '新闻'),
+            BottomNavigationBarItem(icon: Icon(Icons.explore), label: '发现'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
+          ],
+        ),
+      ),
     );
   }
-} 
+}
