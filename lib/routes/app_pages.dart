@@ -3,6 +3,7 @@ import 'package:oliyo_app/pages/clock/clock_page.dart';
 import 'package:oliyo_app/pages/main/main_page.dart';
 import 'package:oliyo_app/pages/auth/login_page.dart';
 import 'package:oliyo_app/pages/auth/register_page.dart';
+import 'package:oliyo_app/pages/splash/splash_page.dart';
 import 'package:oliyo_app/bindings/auth_binding.dart';
 import 'package:oliyo_app/bindings/main_binding.dart';
 import 'package:oliyo_app/bindings/clock_binding.dart';
@@ -16,9 +17,13 @@ import 'package:oliyo_app/pages/learning/learning_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
-  static const initial = Routes.main;
+  static const initial = Routes.splash;
 
   static final routes = [
+    GetPage(
+      name: Routes.splash,
+      page: () => const SplashPage(),
+    ),
     GetPage(
       name: Routes.main,
       page: () => const MainPage(),

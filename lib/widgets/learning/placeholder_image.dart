@@ -80,6 +80,8 @@ class PlaceholderImageWidget extends StatelessWidget {
         return Icons.palette;
       case LearningCategory.numbers:
         return Icons.numbers;
+      default:
+        return Icons.help;
     }
   }
 

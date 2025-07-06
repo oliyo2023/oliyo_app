@@ -1,5 +1,5 @@
 name: oliyo_app
-description: "A new Flutter project."
+description: "A comprehensive Flutter application for learning and lifestyle management."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -20,6 +20,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.7.0
+  flutter: ">=3.19.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -58,6 +59,10 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   mockito: ^5.4.4 # Add mockito for mocking dependencies
   build_runner: ^2.4.9 # Add build_runner to generate mock files
+  flutter_driver:
+    sdk: flutter
+  json_annotation: ^4.9.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_launcher_icons:
@@ -68,8 +73,8 @@ flutter_launcher_icons:
   web:
     generate: true
     image_path: "assets/images/logo.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
+    background_color: "#4A90E2"
+    theme_color: "#4A90E2"
   windows:
     generate: true
     image_path: "assets/images/logo.png"
@@ -77,6 +82,7 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/images/logo.png"
+
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -116,3 +122,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# 启动画面配置
+flutter_native_splash:
+  color: "#4A90E2"
+  image: assets/images/logo.png
+  android_12:
+    image: assets/images/logo.png
+    color: "#4A90E2"

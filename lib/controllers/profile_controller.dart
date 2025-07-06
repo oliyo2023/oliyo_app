@@ -8,8 +8,8 @@ import 'package:oliyo_app/routes/app_routes.dart';
 final Logger _logger = Logger('ProfileController');
 
 class ProfileController extends GetxController {
-  final AuthController authController =
-      Get.find<AuthController>(); // 获取 AuthController 实例
+  // 延迟获取 AuthController，避免初始化顺序问题
+  AuthController get authController => Get.find<AuthController>();
 
   void logout() async {
     try {

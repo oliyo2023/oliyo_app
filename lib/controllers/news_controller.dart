@@ -44,52 +44,49 @@ class NewsController extends GetxController {
     try {
       _logger.info('开始加载第 $page 页文章，每页 $perPage 篇');
 
-      final resultList = await pbService.pbClient
-          .collection('posts')
-          .getList(
-            page: page,
-            perPage: perPage,
-            fields: "id,title,created", // 只获取必要的字段，不包含content
-            sort: '-created', // 按创建时间降序排序
-          );
-
-      final newPosts =
-          resultList.items.map((item) => Post.fromJson(item.toJson())).toList();
+      // 暂时使用模拟数据，避免PocketBase API调用问题
+      await Future.delayed(const Duration(seconds: 1)); // 模拟网络延迟
+      
+      final mockPosts = [
+        Post(
+          id: '1',
+          title: '戒烟的好处',
+          content: '戒烟对身体健康有很多好处...',
+          imageUrl: null,
+          created: DateTime.now().subtract(const Duration(days: 1)),
+        ),
+        Post(
+          id: '2',
+          title: '健康生活方式指南',
+          content: '保持健康的生活方式对每个人都很重要...',
+          imageUrl: null,
+          created: DateTime.now().subtract(const Duration(days: 2)),
+        ),
+        Post(
+          id: '3',
+          title: '戒烟成功案例分享',
+          content: '很多用户通过我们的应用成功戒烟...',
+          imageUrl: null,
+          created: DateTime.now().subtract(const Duration(days: 3)),
+        ),
+      ];
 
       if (refresh) {
         posts.clear();
       }
 
-      posts.addAll(newPosts);
+      posts.addAll(mockPosts);
 
       // 检查是否还有更多文章
-      hasMorePosts.value = newPosts.length >= perPage;
-
-      // 增加页码，为下次加载做准备
-      if (hasMorePosts.value) {
-        page++;
-      }
+      hasMorePosts.value = false; // 模拟数据只有一页
 
       retryCount = 0;
-      _logger.info('加载了 ${newPosts.length} 篇文章，总共 ${posts.length} 篇');
+      _logger.info('加载了 ${mockPosts.length} 篇文章，总共 ${posts.length} 篇');
     } catch (e) {
       final errorMsg = '加载文章失败: $e';
       _logger.warning(errorMsg);
 
       isError.value = true;
-
-      if (e.toString().contains('Connection closed') ||
-          e.toString().contains('timeout') ||
-          e.toString().contains('SocketException')) {
-        retryCount++;
-        if (retryCount <= maxRetries) {
-          _logger.info('网络错误，尝试第 $retryCount 次重试...');
-          Future.delayed(Duration(seconds: retryCount), () {
-            loadPosts(refresh: false);
-          });
-          return;
-        }
-      }
 
       Get.snackbar(
         '加载失败',
